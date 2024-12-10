@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>FastAPI WebSocket Demo</title>
+</head>
+<body>
+    <h1>WebSocket Demo</h1>
+    <input type="text" id="messageText" placeholder="Type a message...">
+    <button onclick="sendMessage()">Send</button>
+    <ul id="messages">
+    </ul>
+
+    <script>
+        const ws = new WebSocket("ws://localhost:8000/ws");
+        
+        ws.onmessage = function(event) {
+            const messages = document.getElementById('messages');
+            const message = document.createElement('li');
+            message.textContent = event.data;
+            messages.appendChild(message);
+        };
+
+        function sendMessage() {
+            const input = document.getElementById("messageText");
+            ws.send(input.value);
+            input.value = '';
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>SSE Demo</title>
+</head>
+<body>
+    <h1>Server-Sent Events Demo</h1>
+    <div>
+        <h2>Send Message</h2>
+        <input type="text" id="messageText" placeholder="Type a message...">
+        <button onclick="sendMessage()">Send</button>
+    </div>
+    <div>
+        <h2>Received Messages:</h2>
+        <ul id="messages"></ul>
+    </div>
+
+    <script>
+        // Connect to SSE endpoint
+        const eventSource = new EventSource('/sse');
+        
+        // Handle incoming messages
+        eventSource.onmessage = function(event) {
+            const messages = document.getElementById('messages');
+            const message = document.createElement('li');
+            message.textContent = event.data;
+            messages.appendChild(message);
+        };
+
+        // Handle errors
+        eventSource.onerror = function(error) {
+            console.error('SSE Error:', error);
+            eventSource.close();
+        };
+
+        // Function to send messages
+        async function sendMessage() {
+            const input = document.getElementById("messageText");
+            const message = input.value;
+            
+            try {
+                await fetch('/messages', {
+                    method: 'POST',
+                    body: message
+                });
+                input.value = '';
+            } catch (error) {
+                console.error('Error sending message:', error);
+            }
+        }
+    </script>
+</body>
+</html>
